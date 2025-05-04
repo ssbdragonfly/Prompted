@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 95%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 0 0% 95%;
+    --muted-foreground: 0 0% 50%;
+    --accent: 0 0% 90%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 100% 40%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 85%;
+    --input: 0 0% 85%;
+    --ring: 0 0% 0%;
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-mono;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  .animated-gradient {
+    background: linear-gradient(
+      -45deg,
+      rgba(0, 0, 0, 0.1),
+      rgba(255, 255, 255, 0.1),
+      rgba(0, 0, 0, 0.05)
+    );
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  .prompt-text {
+    font-family: monospace;
+  }
+  
+  .container-custom {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .container-custom {
+      max-width: 640px;
+      padding: 0 1.5rem;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .container-custom {
+      max-width: 768px;
+    }
+  }
+  
+  @media (min-width: 900px) {
+    .container-custom {
+      max-width: 900px;
+    }
+  }
+  
+  .card {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  
+  .typewriter {
+    overflow: hidden;
+    border-right: .15em solid black;
+    white-space: normal;
+    margin: 0 auto;
+    letter-spacing: .1em;
+    animation: 
+      typing-mobile 3.5s steps(40, end),
+      blink-caret .75s step-end infinite;
+  }
+  
+  @media (min-width: 768px) {
+    .typewriter {
+      white-space: nowrap;
+      animation: 
+        typing 3.5s steps(40, end),
+        blink-caret .75s step-end infinite;
+    }
+  }
+
+  @keyframes typing-mobile {
+    from { max-height: 0 }
+    to { max-height: 1000px }
+  }
+
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+  }
+
+  @keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: black }
+  }
+}
