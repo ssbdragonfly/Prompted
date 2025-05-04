@@ -6,9 +6,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { generateAiContent, generatePrompt } from '../services/aiService';
 import { toast } from '@/components/ui/sonner';
 import Metadata from '@/components/Metadata';
-import DifficultySelector, { Difficulty } from '@/components/DifficultySelector';
+import { Difficulty } from '@/components/DifficultySelector';
+import { useNavigate } from 'react-router-dom';
 
-const Home = () => {
+const GamePage = () => {
   const [loading, setLoading] = useState(true);
   const [aiContent, setAiContent] = useState<string>("");
   const [actualPrompt, setActualPrompt] = useState<string>("");
@@ -16,9 +17,9 @@ const Home = () => {
   const [revealed, setRevealed] = useState(false);
   const [similarity, setSimilarity] = useState<number|null>(null);
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
-  
+  const navigate = useNavigate();
 
-  const loadOneChallenge = async () => {
+  const loadOneChallenge = React.useCallback(async () => {
     try {
       setLoading(true);
       setRevealed(false);
@@ -33,21 +34,29 @@ const Home = () => {
       
       setLoading(false);
     } 
-
     catch(error) {
       console.error("(If this is repeated contact me), failed to load challenge:", error);
       toast.error("Failed to load challenge. Please try again.");
       setLoading(false);
     }
-  };
-  
+  }, [difficulty]);
 
+  useEffect(() => {
+    const savedDifficulty = localStorage.getItem('gameDifficulty') as Difficulty;
+    
+    if (savedDifficulty) {
+      setDifficulty(savedDifficulty);
+    }
+    
+    loadOneChallenge();
+  }, [loadOneChallenge]);
+  
   const calculateSimilarity = (str1: string, str2: string): number => {
     //text normalization and preprocessing
     const normalize = (text: string) => {
       return text.toLowerCase()
-        .replace(/[^\w\s]/g, '')
-        .replace(/\s+/g, ' ')
+        .replace(/[^\\w\\s]/g, '')
+        .replace(/\\s+/g, ' ')
         .trim();
     };
     
@@ -56,13 +65,13 @@ const Home = () => {
     
     //tokenization
     const tokenize = (text: string) => {
-      return text.split(/\s+/).filter(Boolean);
+      return text.split(/\\s+/).filter(Boolean);
     };
     
     const tokens1 = tokenize(normalizedStr1);
     const tokens2 = tokenize(normalizedStr2);
     
-    //word frequency analysis with BM25 weighting (I tried TD-IDF but this seems to work better!)
+    //word frequency analysis with BM25 weighting
     const createFreqMap = (tokens: string[]) => {
       const freqMap: Record<string, number> = {};
       tokens.forEach(token => {
@@ -98,7 +107,6 @@ const Home = () => {
       bm25Similarity += weight1 * weight2;
       magnitude1 += weight1 * weight1;
       magnitude2 += weight2 * weight2;
-
     });
     
     //normalize
@@ -137,7 +145,7 @@ const Home = () => {
     const stemmedSet2 = new Set(stemmedTokens2);
     const intersection = new Set([...stemmedSet1].filter(word => stemmedSet2.has(word)));
     const union = new Set([...stemmedSet1, ...stemmedSet2]);
-    const jaccardSimilarity = union.size > 0 ?intersection.size/union.size :0;
+    const jaccardSimilarity = union.size > 0 ? intersection.size/union.size : 0;
     
     //n-gram analysis
     const extractNgrams = (tokens: string[], size: number) => {
@@ -150,14 +158,12 @@ const Home = () => {
     
     const ngramSimilarities = [];
     const maxNgramSize = Math.min(5, Math.floor(Math.min(tokens1.length, tokens2.length) / 2));
-    
     for (let n = 1; n <= maxNgramSize; n++) {
       const ngrams1 = extractNgrams(tokens1, n);
       const ngrams2 = extractNgrams(tokens2, n);
       const ngramIntersection = new Set([...ngrams1].filter(ng => ngrams2.has(ng)));
       const ngramUnion = new Set([...ngrams1, ...ngrams2]);
       const similarity = ngramUnion.size > 0 ? ngramIntersection.size/ ngramUnion.size : 0;
-
       ngramSimilarities.push(similarity);
     }
     
@@ -172,7 +178,6 @@ const Home = () => {
     });
     
     const ngramSimilarity = totalWeight > 0 ? weightedNgramSimilarity / totalWeight : 0;
-    
     const damerauLevenshteinDistance = (a: string, b: string): number => {
       const matrix: number[][] = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(0));
       
@@ -205,12 +210,12 @@ const Home = () => {
 
     const calculatePositionalSimilarity = (tokens1: string[], tokens2: string[]): number => {
       const commonWords = [...new Set(tokens1)].filter(word => tokens2.includes(word));
-      
-      if (commonWords.length === 0) return 0;
+      if (commonWords.length === 0){
+        return 0;
+      }
       
       let positionDiffSum = 0;
       let maxPossibleDiff = 0;
-      
       commonWords.forEach(word => {
         const positions1 = tokens1.map((t, i) => t === word ? i : -1).filter(p => p !== -1);
         const positions2 = tokens2.map((t, i) => t === word ? i : -1).filter(p => p !== -1);
@@ -223,11 +228,12 @@ const Home = () => {
         for (let offset = 0; offset < normalizedPos2.length; offset++) {
           let diffSum = 0;
           let count = 0;
-          
+
           for (let i = 0; i < normalizedPos1.length; i++) {
             const j = (i + offset) % normalizedPos2.length;
             diffSum += Math.abs(normalizedPos1[i] - normalizedPos2[j]);
             count++;
+
           }
           
           minDiffSum = Math.min(minDiffSum, diffSum / count);
@@ -242,7 +248,6 @@ const Home = () => {
     };
     
     const positionalSimilarity = calculatePositionalSimilarity(tokens1, tokens2);
-    
     const lengthRatio = Math.min(tokens1.length, tokens2.length) / Math.max(tokens1.length, tokens2.length);
     
     const getPosTags = (tokens: string[]): string[] => {
@@ -263,7 +268,6 @@ const Home = () => {
     
     const posTags1 = getPosTags(tokens1);
     const posTags2 = getPosTags(tokens2);
-    
     const lcs = (seq1: string[], seq2: string[]): number => {
       const m = seq1.length;
       const n = seq2.length;
@@ -283,10 +287,7 @@ const Home = () => {
     };
     
     const lcsLength = lcs(posTags1, posTags2);
-    const structureSimilarity = Math.max(posTags1.length, posTags2.length) > 0 
-      ? lcsLength / Math.max(posTags1.length, posTags2.length)
-      : 0;
-    
+    const structureSimilarity = Math.max(posTags1.length, posTags2.length) > 0? lcsLength / Math.max(posTags1.length, posTags2.length): 0;
     const combinedSimilarity = (
       normalizedBM25 * 0.25 +
       jaccardSimilarity * 0.15 +
@@ -297,14 +298,14 @@ const Home = () => {
       structureSimilarity * 0.10
     ) * 100;
 
-    const curvedSimilarity = Math.pow(combinedSimilarity / 100, 0.9) * 100;
-    
+    const curvedSimilarity = Math.pow(combinedSimilarity/ 100, 0.9) * 100;
     return Math.max(0, Math.min(100, Math.round(curvedSimilarity)));
   };
   
   const handleSubmitGuess = () => {
     if (!userGuess.trim()) {
       toast.error("Please enter a guess!");
+
       return;
     }
     
@@ -316,23 +317,23 @@ const Home = () => {
     if (similarityScore > 70) {
       toast.success("Outstanding! Your guess was very close to the actual prompt :)!");
     } 
-    
+
     else if (similarityScore > 40) {
       toast.success("Good guess! You got some of it right.");
     } 
-    
+
     else if (similarityScore > 20) {
       toast("Not bad! You're on the right track.");
     } 
-    
+
     else {
       toast("Your guess was quite different from the actual prompt :(. Try again!");
     }
-
-    console.log("sim score:", similarityScore);
   };
-  
-  useEffect(() => { loadOneChallenge();}, []);
+
+  const handleChangeDifficulty = () => {
+    navigate('/');
+  };
   
   return (
     <div className="flex flex-col items-center space-y-6 sm:space-y-8">
@@ -344,21 +345,22 @@ const Home = () => {
       
       <div className="text-center w-full px-4 sm:px-0 sm:max-w-2xl">
         <h1 className="text-3xl sm:text-4xl font-bold mb-2 sm:mb-4">What Was The Prompt?</h1>
-        <p className="text-base sm:text-lg mb-6 sm:mb-8">
+        <p className="text-base sm:text-lg mb-2">
           Can you guess what prompt was used to generate the AI text below?
         </p>
-      </div>
-      
-      <div className="w-full px-4 sm:px-0 sm:max-w-2xl">
-        <DifficultySelector 
-          difficulty={difficulty} 
-          setDifficulty={(newDifficulty) => {
-            setDifficulty(newDifficulty);
-            if (!loading && !revealed) {
-              loadOneChallenge();
-            }
-          }} 
-        />
+        <div className="flex justify-center items-center mb-4">
+          <span className="text-sm font-medium px-3 py-1 bg-secondary rounded-full">
+            Difficulty: {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+          </span>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={handleChangeDifficulty}
+            className="ml-2 text-xs"
+          >
+            Change
+          </Button>
+        </div>
       </div>
       
       <Card className="w-full mx-4 sm:mx-0 sm:max-w-2xl p-4 sm:p-6 bg-card border shadow-lg">
@@ -422,15 +424,15 @@ const Home = () => {
             >
               Submit Guess
             </Button>
-          ) : null}
+          ):null}
           
           <Button 
             onClick={loadOneChallenge} 
-            variant={revealed ?"default" : "outline"}
+            variant={revealed ? "default" : "outline"}
             disabled={loading}
             className={`w-full ${revealed ? "sm:flex-1" : ""}`}
           >
-            {revealed ? "Next Challenge": "Skip"}
+            {revealed ? "Next Challenge" : "Skip"}
           </Button>
         </div>
       </div>
@@ -438,4 +440,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default GamePage;

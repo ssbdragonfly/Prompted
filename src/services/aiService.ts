@@ -24,7 +24,7 @@ export const generateAiContent = async (prompt:string): Promise<string> => {
       },
       body: JSON.stringify({
         messages: [{ role: "user", content: prompt }],
-        temperature: Math.random() * 0.3 + 0.7,
+        temperature: Math.random() * 0.3 + 0.7, //meant to put in some sort of randomness to the completion request so that outputs aren't too similar!
       }),
     });
 
@@ -34,30 +34,62 @@ export const generateAiContent = async (prompt:string): Promise<string> => {
 
     const data: CompletionResponse = await response.json();
     return data.choices[0].message.content;
-  } catch (error) {
+  } 
+  
+  catch (error) {
     console.error("Error generating AI content:", error);
     throw error;
   }
 };
 
-export const generatePrompt = async (): Promise<string> => {
+export const generatePrompt = async (difficulty: string = 'medium'):Promise<string> => {
   const styles = [
-    'Clever and witty',
+    'Search Query',
     'Professional and nuanced',
     'Thoughtful reflection',
     'Technical explanation with an analogy',
     'Creative story starter',
     'Thought-provoking opinion question',
-    'Detailed how-to instruction'
+    'Detailed how-to instruction',
+    'Historical context',
+    'Asking for a word definition',
+    'Asking for a poem',
+    'Asking for a song',
+    'Asking for a joke',
   ];
 
   const randomStyle = styles[Math.floor(Math.random() * styles.length)];
+  let complexityLevel, constraintCount, challengeLevel, simpleControl;
+  
+  switch(difficulty) {
+    case 'easy':
+      complexityLevel = 'simple and straightforward';
+      constraintCount = '1-2';
+      challengeLevel = 'relatively easy';
+      simpleControl = 'You may have overly simple prompts.';
+      break;
 
-  const promptForPrompt = `Generate a focused writing prompt for a chatbot that will result in a response of 1-3 paragraphs maximum. The prompt should be moderately challenging but still possible to reverse-engineer from the output.
+    case 'hard':
+      complexityLevel = 'complex and nuanced';
+      constraintCount = '3-4';
+      challengeLevel = 'quite challenging';
+      simpleControl = "Avoid overly simple or vague prompts";
+      break;
+
+    case 'medium':
+    default:
+      complexityLevel = 'moderately challenging';
+      constraintCount = '2-3';
+      challengeLevel = 'moderately difficult';
+      simpleControl = 'You may have moderately complex prompts.';
+      break;
+  }
+
+  const promptForPrompt = `Generate a focused writing prompt for a chatbot that will result in a response of 1-2 paragraphs maximum. The prompt should be ${complexityLevel} but still possible to reverse-engineer from the output.
 
 Using this style: ${randomStyle}
 
-Keep the prompt specific with 2-3 constraints maximum. Avoid overly simple or vague prompts. The goal is to create a prompt that would take someone a few thoughtful moments to guess after seeing the AI's response.
+Keep the prompt specific with ${constraintCount} constraints. ${simpleControl}. The goal is to create a prompt that would be ${challengeLevel} for someone to guess after seeing the AI's response.
 
 Examples of good prompts:
 - "Write about a cat who secretly works as a jazz musician at night"

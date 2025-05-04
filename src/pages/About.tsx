@@ -21,7 +21,7 @@ export const About = () => {
         <p className="text-base sm:text-lg text-gray-600">Thoughts on AI Literacy</p>
       </div>
       
-      <Card className="p-4 sm:p-8 bg-white/70 border shadow-lg">
+      <Card className="p-4 sm:p-8 bg-card border shadow-lg">
         <div className="prose prose-sm sm:prose-base prose-neutral max-w-none">
           <h2 className="text-xl sm:text-2xl font-bold mb-4 border-b pb-2">Why AI Literacy Matters</h2>
           
