@@ -18,7 +18,7 @@ export const About = () => {
       
       <div className="text-center">
         <h1 className="text-3xl sm:text-4xl font-bold mb-2">Conversations with Machines</h1>
-        <p className="text-base sm:text-lg text-gray-600 dark:text-purple-300">Thoughts on AI Literacy</p>
+        <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300">Thoughts on AI Literacy</p>
       </div>
       
       <Card className="p-4 sm:p-8 bg-card border shadow-lg">
