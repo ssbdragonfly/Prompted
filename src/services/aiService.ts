@@ -24,6 +24,7 @@ export const generateAiContent = async (prompt:string): Promise<string> => {
       },
       body: JSON.stringify({
         messages: [{ role: "user", content: prompt }],
+        temperature: Math.random() * 0.3 + 0.7,
       }),
     });
 
