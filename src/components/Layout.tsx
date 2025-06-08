@@ -58,6 +58,9 @@ const Layout = ({ children }: LayoutProps) => {
                   Play
                 </Link>
               )}
+              <Link to="/daily" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                Daily
+              </Link>
               <Link to="/about" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                 About
               </Link>
@@ -84,6 +87,13 @@ const Layout = ({ children }: LayoutProps) => {
                 Play
               </Link>
             )}
+            <Link 
+              to="/daily" 
+              className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors py-2"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Daily
+            </Link>
             <Link 
               to="/about" 
               className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors py-2"

@@ -3,9 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Metadata from '@/components/Metadata';
 import { Difficulty } from '@/components/DifficultySelector';
+import { Calendar } from 'lucide-react';
 
 const DifficultySelection = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('medium');
@@ -13,7 +14,6 @@ const DifficultySelection = () => {
 
   const handleStartGame = () => {
     localStorage.setItem('gameDifficulty', selectedDifficulty);
-
     navigate('/play');
   };
 
@@ -78,6 +78,13 @@ const DifficultySelection = () => {
           Start Game
         </Button>
       </Card>
+      
+      <div className="text-center mt-4">
+        <Link to="/daily" className="flex items-center justify-center text-primary hover:underline">
+          <Calendar className="mr-2 h-4 w-4" />
+          Try today's daily challenge
+        </Link>
+      </div>
     </div>
   );
 };

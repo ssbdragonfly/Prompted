@@ -11,6 +11,7 @@ import Layout from "./components/Layout";
 import { useEffect } from "react";
 import DifficultySelection from "./pages/DifficultySelection";
 import GamePage from "./pages/GamePage";
+import DailyChallenge from "./pages/DailyChallenge";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<DifficultySelection />} />
                 <Route path="/play" element={<GamePage />} />
+                <Route path="/daily" element={<DailyChallenge />} />
                 <Route path="/about" element={<About />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

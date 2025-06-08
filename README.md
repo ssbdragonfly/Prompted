@@ -1,6 +1,6 @@
 # Prompted
 
-A fun AI prompt guessing game where you try to figure out what prompt was used to generate AI text.
+A website to explore random gen-AI interactions.
 
 ## Overview
 
@@ -16,6 +16,7 @@ This project is still a work in progress! More features and improvements are com
 - Vite
 - Tailwind CSS
 - Shadcn UI components
+- Llama LLM (Meta, funded by [HackClub](https://hackclub.com))
 
 ## Getting Started
 
