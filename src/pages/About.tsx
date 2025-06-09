@@ -32,12 +32,10 @@ export const About = () => {
           </p>
           
           <p className="mb-4">
-            <strong>prompted</strong> is a simple exploration, a game to help understand how AI interprets our instructions. 
-            By reverse-engineering AI outputs, we can gain insights into the relationship between our words and the machine's understanding.
-            This game is the first step in what I hope will be a series of projects (currently in development) that explore AI literacy in different ways.
+            <strong>prompted</strong> is an agreggated set of resources and a game designed to help you think about AI literacy.
           </p>
           
-          <h3 className="text-lg sm:text-xl font-bold mt-6 mb-3">Beyond Better Results</h3>
+          <h3 className="text-lg sm:text-xl font-bold mt-6 mb-3">Beyond Prompt Engineering</h3>
           
           <p className="mb-4">
             While learning to craft effective prompts certainly helps get better AI outputs, I believe the implications extend further:

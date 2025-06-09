@@ -1,19 +1,34 @@
 import { generateAiContent } from './aiService';
 
 const getPromptsList = (): string[] => {
-  try{
-    const envPrompts = process.env.NEXT_PUBLIC_DAILY_PROMPTS;
+  try {
+    const envPrompts = import.meta.env.VITE_DAILY_PROMPTS || import.meta.env.NEXT_PUBLIC_DAILY_PROMPTS;
 
-    if(envPrompts){
-      return JSON.parse(envPrompts);
+    if (envPrompts) {
+      if (Array.isArray(envPrompts)) {
+        return envPrompts;
+      }
+      try {
+        return JSON.parse(envPrompts);
+      } catch (e) {
+        console.error("Failed to parse prompts as JSON:", e);
+      }
     }
-  }
-  catch (error) {
-    console.error("error parsing", error);
+  } catch (error) {
+    console.error("Error accessing environment variables:", error);
   }
   
   return [
-    "Write a short poem about the changing seasons using only weather-related metaphors"
+    "Write a short poem about the changing seasons using only weather-related metaphors",
+    "Explain quantum computing as if you're teaching a curious 10-year-old",
+    "Describe the taste of your favorite food without naming any ingredients",
+    "Write a motivational message for someone starting a difficult new job",
+    "Create a brief story about a lost key that has magical properties",
+    "Explain how social media has changed human communication using an ocean analogy",
+    "Write a short dialogue between the sun and the moon discussing their daily routines",
+    "Describe what freedom means using only sensory descriptions",
+    "Write a brief letter from a houseplant to its owner explaining its needs",
+    "Create a short story about a character who discovers they can speak to animals, but only on Tuesdays"
   ];
 };
 
@@ -36,9 +51,11 @@ const getDailyPrompt = (): string => {
   const date = getCurrentDateEST();
   const dayOfMonth = date.getDate() - 1;
   
-  const selectionMethod = process.env.NEXT_PUBLIC_PROMPT_SELECTION_METHOD || 'sequential';
+  const selectionMethod = import.meta.env.VITE_PROMPT_SELECTION_METHOD || 
+                          import.meta.env.NEXT_PUBLIC_PROMPT_SELECTION_METHOD || 
+                          'sequential';
   
-  if(selectionMethod === 'random'){
+  if (selectionMethod === 'random') {
     const randomIndex = Math.floor(Math.random() * dailyPrompts.length);
     return dailyPrompts[randomIndex];
   } else {
@@ -63,7 +80,7 @@ export const getDailyChallenge = async (): Promise<{ prompt: string, content: st
     }
   }
   
-  return{
+  return {
     date: today,
     prompt,
     content: content || ""
@@ -90,10 +107,18 @@ export const generateShareText = (similarity: number): string => {
   const date = getTodayDateString();
   let emoji = '🤔';
   
-  if (similarity > 80) emoji = '🌟';
-  else if (similarity > 60) emoji = '✨';
-  else if (similarity > 40) emoji = '👍';
-  else if (similarity > 20) emoji = '🙂';
-  
+  if (similarity > 80){
+    emoji = '🌟';
+  }
+  else if (similarity > 60){ 
+    emoji = '✨';
+  }
+  else if (similarity > 40){
+    emoji = '👍';
+  }
+  else if (similarity > 20){
+    emoji = '🙂';
+  }
+
   return `Prompted Daily Challenge (${date}) ${emoji}\nMy similarity score: ${similarity}%\nTry it yourself at promptedai.vercel.app/daily`;
 };

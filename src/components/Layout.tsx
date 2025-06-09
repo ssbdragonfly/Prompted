@@ -49,17 +49,20 @@ const Layout = ({ children }: LayoutProps) => {
             </button>
             
             <div className="hidden md:flex space-x-6">
-              {location.pathname === '/play' ? (
-                <Link to="/" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                  Home
-                </Link>
-              ) : (
-                <Link to="/play" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                  Play
-                </Link>
-              )}
+              <Link to="/" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                Home
+              </Link>
+              <Link to="/play" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                Play
+              </Link>
               <Link to="/daily" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                 Daily
+              </Link>
+              <Link to="/news" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                News
+              </Link>
+              <Link to="/learn" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                Learn
               </Link>
               <Link to="/about" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                 About
@@ -70,29 +73,40 @@ const Layout = ({ children }: LayoutProps) => {
         
         {mobileMenuOpen && (
           <div className="md:hidden container-custom mt-3 pb-3 flex flex-col space-y-4">
-            {location.pathname === '/play' ? (
-              <Link 
-                to="/" 
-                className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Home
-              </Link>
-            ) : (
-              <Link 
-                to="/play" 
-                className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Play
-              </Link>
-            )}
+            <Link 
+              to="/" 
+              className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors py-2"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Home
+            </Link>
+            <Link 
+              to="/play" 
+              className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors py-2"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Play
+            </Link>
             <Link 
               to="/daily" 
               className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
               Daily
+            </Link>
+            <Link 
+              to="/news" 
+              className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors py-2"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              News
+            </Link>
+            <Link 
+              to="/learn" 
+              className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors py-2"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Learn
             </Link>
             <Link 
               to="/about" 

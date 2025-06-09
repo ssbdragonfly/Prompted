@@ -16,7 +16,7 @@ const defaultMetadata = {
   description: 'Can you guess what prompt was used to generate the AI text? Test your skills and learn about AI prompting.',
   keywords: 'AI, prompts, game, artificial intelligence, learning',
   image: '/image.jpg',
-  url: 'https://promptedai.vercel.app', //switch later (have no idea if ill get this domain)
+  url: 'https://promptedai.vercel.app',
   type: 'website',
   author: 'Shaurya Bisht',
 };
